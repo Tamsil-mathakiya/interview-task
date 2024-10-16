@@ -1,13 +1,19 @@
-import { useState } from 'react'
-import './App.css'
-import Login from './componets/login'
-import register from './componets/register'
-function App() {
-  const [count, setCount] = useState(0)
+import React from 'react';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import Login from './componets/login';
+import Register from './componets/register';
 
+function App() {
   return (
-   <Login/>
-  )
+    <Router>
+      <div>
+        <Routes>
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+        </Routes>
+      </div>
+    </Router>
+  );
 }
 
-export default App
+export default App;

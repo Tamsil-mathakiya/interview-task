@@ -1,28 +1,33 @@
-const login = require('../models/login_model');
+const User = require('../models/register_models');
 const jwt = require('jsonwebtoken');
-const jwt_secret = 'tamsilmathakiya';
 
-const loginuser = async (req, res) => {
+const jwtSecret = 'tamsilmathakiya'; // Keep this secure
+
+const loginUser = async (req, res) => {
     const { email, password } = req.body;
+
     try {
-        let user = await login.findOne({ email });
-        if (user) {
-            const data = { user: { email: user.email } };
-            const authtoken = jwt.sign(data, jwt_secret);
-            return res.json({ message: "user login", token: authtoken });
-        } else {
-            const newuser = await login.create({
-                email,
-                password
-            });
-            const data = { user: { email: newuser.email } };
-            const authtoken = jwt.sign(data, jwt_secret);
-            return res.status(201).json({ message: "user is login success", token: authtoken });
+        // Check if the user exists
+        const user = await User.findOne({ email });
+        if (!user) {
+            return res.status(400).json({ message: 'Invalid email or password' });
         }
+
+        // Compare the plain-text password (Note: ideally, passwords should be hashed)
+        if (user.password !== password) {
+            return res.status(400).json({ message: 'Invalid email or password' });
+        }
+
+        // Create JWT payload and sign token
+        const payload = { user: { id: user._id, email: user.email } };
+        const token = jwt.sign(payload, jwtSecret, { expiresIn: '1h' });
+
+        // Respond with the token
+        return res.json({ token });
     } catch (error) {
-        console.log("not login", error);
-        res.status(500).send("Server Error");
+        console.error('Error during login:', error);
+        res.status(500).send('Server error');
     }
 };
 
-module.exports = { loginuser };
+module.exports = { loginUser };

@@ -7,6 +7,10 @@ export const counterSlice = createSlice({
         user: null,
     },
     reducers: {
+        register: (state, action) => {
+            state.isAuthenticated = true;
+            state.user = action.payload;
+        },
         login: (state, action) => {
             state.isAuthenticated = true;
             state.user = action.payload;
@@ -18,5 +22,5 @@ export const counterSlice = createSlice({
     },
 });
 
-export const { login, logout } = counterSlice.actions;
+export const { register, login, logout } = counterSlice.actions;
 export default counterSlice.reducer;
